@@ -10,6 +10,8 @@ clean:
 install:
 	@true
 
-test:
+test: run
+
+run:
 	@node argument.js
 
