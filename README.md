@@ -1,13 +1,6 @@
 # argument
-Javascript library to allow conversations between game characters
+A simple AI that can create RPG style characters. Interactions will appear to be
+simple conversation pre-canned conversation trees, but in reality they will all
+be generated on the fly based on relationships between the characters.
 
-Planned features:
-	- Allow adding any number of characters, and specify topics that each is
-	interested in.
-
-	- Automatically generate conversations between characters based on the
-	topics that they are interested in, their relationship, their mood, etc.
-
-	- Generate multiple responses for each conversation and allow interactive
-	control of which response is used.
 
