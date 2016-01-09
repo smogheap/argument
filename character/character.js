@@ -10,6 +10,12 @@ var names = {
 /* Keep track of all characters */
 var characters = [];
 
+// TODO Create our own varient of setTimeout that does a significantly shorter
+//		delay when we are preparing a simulation. The idea is that we can let
+//		the interactions run between various characters before the game actually
+//		starts so that complicated relationships exist by the time that the
+//		player gets control.
+
 function randInt(min, max)
 {
 	var range	= max - min;
@@ -146,9 +152,13 @@ Character.prototype.getText = function getText(id)
 
 		case 'not much':
 			return("Not much");
-	}
 
-	return('...');
+		case 'nothing':
+			return("Nothing");
+
+		default:
+			return(id);
+	}
 };
 
 /* Say something to any nearby characters to try to get a conversation going */
@@ -211,22 +221,44 @@ Character.prototype.say = function say(what, to)
 		}
 
 		// TODO Ignore characters that aren't within earshot
-		who.hear(topic, c, !to || who == to);
+		who.hear(topic, c, to && who != to);
 	}
 };
 
 /* Hear something that another character said */
 Character.prototype.hear = function hear(what, who, overheard)
 {
-	var c = this;
+	var c		= this;
+	var options	= [];
+
+	// console.log(c.name, overheard ? 'overheard' : 'heard', what);
 
 	c.resetBoredom();
 
 	// TODO Update the relationship between this character and the one that is
-	//		talking to us based on what was said. Then come up with 3 or 4
-	//		possible responses.
-	//
-	//		If this character isn't being controlled by the player then delay
-	//		for a short period and say one of the responses back.
+	//		talking to us based on what was said.
+
+	// TODO Come up with (and display) 3 or 4 answers that this character might
+	//		say in response.
+
+	// TODO If this character isn't being controlled by the player then delay
+	//		for a short period and give one of the responses.
+
+	if (!overheard) {
+		switch (what.id) {
+			case 'sup':
+				options.push('not much');
+				options.push('nothing');
+				options.push('chilling');
+				break;
+		}
+	}
+
+	// TODO Show the options above the character like a menu
+	if (options.length) {
+		setTimeout(function() {
+			c.say(randItem(options), who);
+		}, Math.random() * 3000);
+	}
 };
 
