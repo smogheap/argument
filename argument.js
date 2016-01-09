@@ -1,4 +1,4 @@
-character = require('./character.js');
+character = require('./character');
 
 
 process.stdout.write("Welcome to argument\n");

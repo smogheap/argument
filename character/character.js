@@ -7,6 +7,9 @@ var names = {
 	'neutral':	[ 'Sam', 'Max', 'Andy', 'Alex' ]
 };
 
+/* Keep track of all characters */
+var characters = [];
+
 function randInt(min, max)
 {
 	var range	= max - min;
@@ -65,6 +68,8 @@ function Character()
 	var c = this;
 
 	EventEmitter.call(this);
+
+	characters.push(c);
 
 	c.age		= randInt(18, 103)
 
