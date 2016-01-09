@@ -71,7 +71,7 @@ function Character()
 
 	characters.push(c);
 
-	c.age		= randInt(18, 103)
+	c.age		= randInt(18, 103);
 
 	/* Gender */
 	c.masculine	= Math.random() * 0.5;
@@ -118,15 +118,115 @@ function Character()
 	// TODO Add as many other attributes as we can think of. The more attributes
 	//		we give each character the more realistic they will feel.
 
-	setTimeout(function() {
-		c.emit('ask', {
-			display:		"Hello, how are you?",
-			id:				'howyoudoing'
-		});
-	}, 1000);
+	/*
+		Wait a variable amount of time based on how shy the character is, and
+		then try to start a conversation with anyone else nearby.
+	*/
+	c.resetBoredom();
 	return(c);
 };
-
 util.inherits(Character, EventEmitter);
 module.exports = Character;
+
+/*
+	Return text to display for the specified question ID as it would be said by
+	this character.
+*/
+Character.prototype.getText = function getText(id)
+{
+	var c		= this;
+
+	switch (id) {
+		case 'sup':
+			// TODO This needs to be more random
+			if (c.shy >= 0.90) return("S..So... uh... Wh..What's... up?");
+			if (c.shy >= 0.75) return("So uh... umm.. What's up?");
+			if (c.shy >= 0.25) return("What's going on?");
+			return("What's up?");
+
+		case 'not much':
+			return("Not much");
+	}
+
+	return('...');
+};
+
+/* Say something to any nearby characters to try to get a conversation going */
+Character.prototype.bored = function bored()
+{
+	// TODO Add some randomness and personality here
+	this.say('sup');
+};
+
+Character.prototype.resetBoredom = function resetBoredom()
+{
+	var c			= this;
+
+	/* Wait at least 2 seconds before blurting something out due to boredom */
+	var boredTime	= 2;
+
+	/* Add between 0 and 20 seconds based on how shy you are */
+	boredTime		+= Math.floor(20 * c.shy);
+
+	/* We don't want to be too predictable */
+	boredTime		+= (Math.floor(10 * Math.random()) - 5);
+
+	if (c.boredTimeout) {
+		clearTimeout(c.boredTimeout);
+	}
+
+	// console.log(c.name, 'will be bored in', boredTime, 'seconds');
+	c.boredTimeout = setTimeout(c.bored.bind(c), 1000 * boredTime);
+};
+
+/*
+	Say something
+
+	If the 'to' argument isn't provided then it will just be said to everyone
+	within earshot.
+*/
+Character.prototype.say = function say(what, to)
+{
+	var c = this;
+
+	c.resetBoredom();
+	if (!what) {
+		return;
+	}
+
+	var topic = {};
+
+	topic.id		= what;
+	topic.text		= c.getText(what);
+
+	if (to) {
+		console.log(c.name + '->' + to.name + ': ' + topic.text);
+	} else {
+		console.log(c.name + ': ' + topic.text);
+	}
+
+	for (var i = 0, who; who = characters[i]; i++) {
+		if (who == c) {
+			continue;
+		}
+
+		// TODO Ignore characters that aren't within earshot
+		who.hear(topic, c, !to || who == to);
+	}
+};
+
+/* Hear something that another character said */
+Character.prototype.hear = function hear(what, who, overheard)
+{
+	var c = this;
+
+	c.resetBoredom();
+
+	// TODO Update the relationship between this character and the one that is
+	//		talking to us based on what was said. Then come up with 3 or 4
+	//		possible responses.
+	//
+	//		If this character isn't being controlled by the player then delay
+	//		for a short period and say one of the responses back.
+};
 

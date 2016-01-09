@@ -25,10 +25,8 @@ process.stdin.on('readable', function()
 	}
 });
 
-var c = new character();
-console.log(c);
+console.log(new character());
+console.log(new character());
+console.log(new character());
 
-c.on('ask', function(question) {
-	console.log(question);
-});
 
