@@ -1,3 +1,6 @@
+var EventEmitter	= require('events').EventEmitter;
+var util			= require('util');
+
 var names = {
 	'male':		[ 'Mark', 'Santiago', 'Dave', 'Tim' ],
 	'female':	[ 'Linda', 'Lacy', 'Susan' ],
@@ -57,11 +60,13 @@ function randItem(array)
 	Create a character, and assign random attributes. These can be overwritten
 	by the consumer as needed.
 */
-module.exports = function()
+function Character()
 {
-	var c = {
-		age:		randInt(18, 103)
-	};
+	var c = this;
+
+	EventEmitter.call(this);
+
+	c.age		= randInt(18, 103)
 
 	/* Gender */
 	c.masculine	= Math.random() * 0.5;
@@ -108,6 +113,15 @@ module.exports = function()
 	// TODO Add as many other attributes as we can think of. The more attributes
 	//		we give each character the more realistic they will feel.
 
+	setTimeout(function() {
+		c.emit('ask', {
+			display:		"Hello, how are you?",
+			id:				'howyoudoing'
+		});
+	}, 1000);
 	return(c);
 };
+
+util.inherits(Character, EventEmitter);
+module.exports = Character;
 
