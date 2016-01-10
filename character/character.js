@@ -120,15 +120,18 @@ function Character()
 	c.patient	= Math.random();
 	c.forgiving	= Math.random();
 	c.shy		= Math.random();
+	c.silly		= Math.random();
 
 	// TODO Add as many other attributes as we can think of. The more attributes
 	//		we give each character the more realistic they will feel.
 
-	/*
-		Wait a variable amount of time based on how shy the character is, and
-		then try to start a conversation with anyone else nearby.
-	*/
 	c.resetBoredom();
+
+	/* Greet everyone in the room */
+	// TODO Only introduce ourselves to people we haven't met (unless we've
+	//		forgotten).
+	this.say('introduce');
+
 	return(c);
 };
 util.inherits(Character, EventEmitter);
@@ -143,6 +146,37 @@ Character.prototype.getText = function getText(id)
 	var c		= this;
 
 	switch (id) {
+		case 'hello':
+		case 'introduce':
+			var line	= '';
+
+			if (c.silly >= 0.75) {
+				line += 'Howdy';
+			} else if (c.shy > 0.75) {
+				line += 'Uh... hey...';
+			} else {
+				line += 'Hi';
+			}
+
+			if (id == 'introduce') {
+				line += ", I'm " + c.name;
+			}
+			return(line);
+
+		case 'good to meet you':
+			var line	= '';
+
+			if (c.silly >= 0.75) {
+				line += 'Howdy';
+			} else if (c.shy > 0.75) {
+				line += 'Oh, um good, to um, meet you... ';
+			} else {
+				line += 'Good to meet you';
+			}
+
+			line += ", I'm " + c.name;
+			return(line);
+
 		case 'sup':
 			// TODO This needs to be more random
 			if (c.shy >= 0.90) return("S..So... uh... Wh..What's... up?");
@@ -250,6 +284,12 @@ Character.prototype.hear = function hear(what, who, overheard)
 				options.push('not much');
 				options.push('nothing');
 				options.push('chilling');
+				break;
+
+			case 'introduce':
+				// TODO We need more options...
+				options.push('good to meet you');
+				options.push('have we met before');
 				break;
 		}
 	}
